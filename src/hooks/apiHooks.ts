@@ -1,6 +1,7 @@
 import fetchData from '@/lib/fetchData';
 import { UserWithNoPassword } from '@sharedTypes/DBTypes';
 import { LoginResponse, UserResponse } from '@sharedTypes/MessageTypes';
+import { startRegistration } from '@simplewebauthn/browser';
 import { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/types';
 // TODO: add imports for WebAuthn functions
 
@@ -46,15 +47,16 @@ const usePasskey = () => {
       body: JSON.stringify(user),
     };
 
-    // fetch and return qrCodeUrl from 2FA server /auth/setup
+    // Fetch setup response
     const registrationResponse = await fetchData<{
       email: string;
       options: PublicKeyCredentialCreationOptionsJSON;
     }>(import.meta.env.VITE_PASSKEY_API + '/auth/setup', options);
 
     console.log(registrationResponse);
-    // TODO: Fetch setup response
-    // TODO: Start registration process
+    // Start registration process
+    const attResp = await startRegistration(registrationResponse.options);
+
     // TODO: Prepare data for verification
     // TODO: Fetch and return verification response
   };
